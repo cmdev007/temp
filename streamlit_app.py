@@ -1,6 +1,8 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import time
+import pandas as pd
+import numpy as np
 
 # Page configuration
 st.set_page_config(
@@ -185,8 +187,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Add decorative header
-st.markdown('<p class="title-font"><span class="sparkle">✨</span> Ritika\'s Birthday Countdown <span class="sparkle">✨</span></p>', unsafe_allow_html=True)
+# Add decorative header with pandas
+st.markdown('<p class="title-font"><span class="sparkle">✨</span> 🐼 Ritika\'s Birthday Countdown 🐼 <span class="sparkle">✨</span></p>', unsafe_allow_html=True)
 
 # Birth date
 birth_date = datetime(1999, 10, 11)
@@ -209,8 +211,8 @@ time_remaining = next_birthday - today
 # Check if it's birthday today
 if time_remaining.days == 0 and time_remaining.seconds < 86400:
     st.balloons()
-    st.markdown('<p class="birthday-message">🎊 HAPPY BIRTHDAY RITIKA! 🎊</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="birthday-message">Welcome to {age}! 🎂🎈🎁</p>', unsafe_allow_html=True)
+    st.markdown('<p class="birthday-message">🐼 HAPPY BIRTHDAY RITIKA! 🐼</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="birthday-message">Welcome to {age}! 🐼🎂🎈🎁</p>', unsafe_allow_html=True)
 
     # Celebration animation
     for _ in range(3):
@@ -223,7 +225,7 @@ else:
     minutes = (time_remaining.seconds % 3600) // 60
     seconds = time_remaining.seconds % 60
 
-    st.markdown(f'<p class="age-text">🎂 Turning Sweet {age} on October 11, {next_birthday.year} 🎂</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="age-text">🐼 Turning Sweet {age} on October 11, {next_birthday.year} 🐼</p>', unsafe_allow_html=True)
 
     # Add spacing
     st.markdown("<br>", unsafe_allow_html=True)
@@ -266,20 +268,91 @@ else:
 # Add spacing
 st.markdown("<br><br>", unsafe_allow_html=True)
 
-# Birthday wishes section
+# Birthday wishes section with pandas
 st.markdown("""
     <div class="wishes-container">
         <p class="wishes-text">
-            <span class="sparkle">🌟</span> Get ready for an amazing celebration! <span class="sparkle">🌟</span>
+            <span class="sparkle">🐼</span> Get ready for an amazing celebration! <span class="sparkle">🐼</span>
         </p>
         <p class="wishes-text" style="margin-top: 20px;">
             🎁 May this year bring you endless joy, incredible success, and beautiful memories! 🎁
         </p>
         <p class="wishes-text" style="margin-top: 20px; font-size: 32px;">
-            🎈 Let's make it unforgettable! 🎈
+            🐼 Let's make it unforgettable! 🐼
         </p>
     </div>
 """, unsafe_allow_html=True)
+
+# Add pandas dataframe with birthday milestones
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Create milestone data
+milestones_data = {
+    '🎯 Milestone': ['Birth Year', 'Sweet 16', 'Legal Adult', 'Quarter Century', 'Current Age'],
+    '📅 Year': [1999, 2015, 2017, 2024, next_birthday.year],
+    '🎂 Age': [0, 16, 18, 25, age],
+    '✨ Special': ['Born! 👶', 'Sweet Sixteen 💖', 'Adult Life Begins 🎓', 'Quarter Century 🌟', 'This Birthday! 🎉']
+}
+
+df_milestones = pd.DataFrame(milestones_data)
+
+st.markdown('<h2 style="text-align: center; color: white; font-size: 42px; margin-top: 40px;">🐼 Ritika\'s Birthday Milestones 🐼</h2>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Style the dataframe
+st.dataframe(
+    df_milestones,
+    use_container_width=True,
+    hide_index=True,
+    column_config={
+        '🎯 Milestone': st.column_config.TextColumn(width='medium'),
+        '📅 Year': st.column_config.NumberColumn(width='small', format='%d'),
+        '🎂 Age': st.column_config.NumberColumn(width='small'),
+        '✨ Special': st.column_config.TextColumn(width='medium')
+    }
+)
+
+# Add countdown statistics using pandas
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown('<h2 style="text-align: center; color: white; font-size: 42px; margin-top: 20px;">🐼 Countdown Statistics 🐼</h2>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Calculate various time units
+total_seconds = time_remaining.total_seconds()
+stats_data = {
+    '⏰ Time Unit': ['Total Seconds', 'Total Minutes', 'Total Hours', 'Total Days', 'Weeks Left'],
+    '🔢 Count': [
+        int(total_seconds),
+        int(total_seconds / 60),
+        int(total_seconds / 3600),
+        time_remaining.days,
+        round(time_remaining.days / 7, 1)
+    ]
+}
+
+df_stats = pd.DataFrame(stats_data)
+
+# Display stats in columns
+col_stat1, col_stat2 = st.columns(2)
+
+with col_stat1:
+    st.dataframe(
+        df_stats,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            '⏰ Time Unit': st.column_config.TextColumn(width='medium'),
+            '🔢 Count': st.column_config.NumberColumn(width='medium', format='%d')
+        }
+    )
+
+with col_stat2:
+    # Create a chart showing countdown progress
+    chart_data = pd.DataFrame({
+        'Unit': ['Days', 'Hours', 'Minutes', 'Seconds'],
+        'Value': [days, hours, minutes, seconds]
+    })
+    st.bar_chart(chart_data.set_index('Unit'), color='#FFD700')
 
 # Auto-refresh every second
 time.sleep(1)
